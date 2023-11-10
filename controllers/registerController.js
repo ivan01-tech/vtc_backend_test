@@ -1,5 +1,3 @@
-const fspromises = require("node:fs/promises")
-const path = require('node:path')
 const bcript = require("bcrypt")
 const usersSchema = require("../models/userModels.js");
 
@@ -9,7 +7,7 @@ const registerController = async function (req, res,) {
 	if (!email || !password) return res.status(500).json({ "message": "server required email and password" })
 
 	// ckeck for duplication
-	const dupliated = usersSchema.find(password)
+	const dupliated = usersSchema.findOne(password)
 	if (dupliated) return res.status(409).json({ "message": "duplicated user on database" })// 409 for duplication
 
 	// TODO must hash password
@@ -20,11 +18,8 @@ const registerController = async function (req, res,) {
 	const newUser = { "email": email, "password": hashPassword }
 	console.log(newUser)
 	try {
-
-		usersSchema.updateOne()
-
+		usersSchema.create(newUser)
 		res.status(201).json({ "message": `new user created ${email}` })
-
 	} catch (err) {
 
 		console.log(err)
